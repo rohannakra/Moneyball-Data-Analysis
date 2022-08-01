@@ -19,6 +19,7 @@ FIP = []
 HR = []
 RBIs = []
 Ks = []
+RC = []
 
 notification.notify(
     title='Data preparation loading...',
@@ -31,13 +32,17 @@ for row in dataset.index:
     year = dataset.loc[row]['Year']
 
     team_object = Teams(year)[team]
-    
+
     ERA.append(team_object.earned_runs_against)
     ERA_PLUS.append(team_object.earned_runs_against_plus)
     FIP.append(team_object.fielding_independent_pitching)
     HR.append(team_object.home_runs)
     RBIs.append(team_object.runs_batted_in)
     Ks.append(team_object.strikeouts)
+
+    # Apply formula to get runs created.
+    runs_created = (team_object.hits + team_object.bases_on_balls) * team_object.total_bases / (team_object.at_bats + team_object.bases_on_balls)
+    RC.append(runs_created)
 
 
 dataset['ERA'] = ERA
@@ -46,6 +51,7 @@ dataset['FIP'] = FIP
 dataset['HR'] = HR
 dataset['RBIs'] = RBIs
 dataset['Ks'] = Ks
+dataset['RC'] = RC
 
 # Add samples from 2013-2021.
 for year in range(2013, 2022):
@@ -71,7 +77,8 @@ for year in range(2013, 2022):
                 team_.fielding_independent_pitching, 
                 team_.home_runs, 
                 team_.runs_batted_in, 
-                team_.strikeouts
+                team_.strikeouts,
+                (team_object.hits + team_object.bases_on_balls) * team_object.total_bases / (team_object.at_bats + team_object.bases_on_balls)
             ]
     
             dataset.loc[len(dataset.index)] = sample
