@@ -18,4 +18,4 @@ from IPython.display import clear_output
 get_ipython().run_line_magic('matplotlib', 'inline')
 
 
-dataset = pd.read_csv('data management/data_all.csv')
+dataset = pd.read_csv('../data/data_all.csv')
